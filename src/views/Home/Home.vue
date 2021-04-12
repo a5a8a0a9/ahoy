@@ -1,14 +1,22 @@
 <template>
   <div class="home">
-    <v-tabs>
-      <v-tab v-for="tab in tabs" :key="tab.title">{{ tab.title }}</v-tab>
-    </v-tabs>
-    <v-data-table
-      :headers="headers"
-      :items="desserts"
-      :items-per-page="5"
-      class="elevation-1"
-    ></v-data-table>
+    <button @click="getRevisionData">show</button>
+    <template v-if="revisionList.length > 0">
+      <v-tabs>
+        <v-tab v-for="revision in revisionList" :key="revision.id">
+          {{ revision.name }}
+        </v-tab>
+      </v-tabs>
+      <v-data-table
+        :headers="headers"
+        :items="desserts"
+        :items-per-page="5"
+        class="elevation-1"
+      ></v-data-table>
+    </template>
+    <template v-else>
+      <h1>暫無資料</h1>
+    </template>
   </div>
 </template>
 
@@ -16,9 +24,6 @@
 export default {
   name: "Home",
   components: {},
-  props: {
-    tabs: Array,
-  },
   data() {
     return {
       headers: [
@@ -116,7 +121,29 @@ export default {
           iron: "6%",
         },
       ],
+      list: [
+        {
+          rule: "",
+          name: "",
+          type: "",
+          owner: "", // 10em
+          status: 0,
+          QA: false,
+          secQA: false,
+          reviewer: "",
+          note: "", // long text
+        },
+      ],
+      revisionList: [],
     };
+  },
+  methods: {
+    getRevisionData() {
+      this.revisionList = this.$store.state.revision.revisionList;
+    },
+  },
+  created() {
+    this.getRevisionData();
   },
 };
 </script>
