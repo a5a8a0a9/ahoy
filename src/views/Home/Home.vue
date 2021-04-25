@@ -1,18 +1,22 @@
 <template>
   <div class="home">
-    <button @click="getRevisionData">show</button>
     <template v-if="revisionList.length > 0">
-      <v-tabs>
+      <v-tabs v-model="activeTab">
         <v-tab v-for="revision in revisionList" :key="revision.id">
           {{ revision.name }}
         </v-tab>
       </v-tabs>
-      <v-data-table
-        :headers="headers"
-        :items="desserts"
-        :items-per-page="5"
-        class="elevation-1"
-      ></v-data-table>
+
+      <v-tabs-items v-model="activeTab">
+        <v-tab-item v-for="revision in revisionList" :key="revision.id">
+          <v-data-table
+            :headers="headers"
+            :items="desserts"
+            :items-per-page="5"
+            class="elevation-1"
+          ></v-data-table>
+        </v-tab-item>
+      </v-tabs-items>
     </template>
     <template v-else>
       <h1>暫無資料</h1>
@@ -21,6 +25,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "Home",
   components: {},
@@ -134,16 +139,15 @@ export default {
           note: "", // long text
         },
       ],
-      revisionList: [],
+      activeTab: null,
     };
   },
-  methods: {
-    getRevisionData() {
-      this.revisionList = this.$store.state.revision.revisionList;
-    },
+  computed: {
+    ...mapGetters({
+      revisionList: "revision/activeTabList",
+    }),
   },
-  created() {
-    this.getRevisionData();
-  },
+  methods: {},
+  mounted() {},
 };
 </script>
