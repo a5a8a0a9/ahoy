@@ -2,17 +2,26 @@ const state = () => ({
   revisionList: [],
 });
 
-const getters = {};
+const getters = {
+  activeTabList: (state) => {
+    return state.revisionList;
+  },
+};
 
 const mutations = {
-  setRevision(state, revisions) {
-    state.revisionList = revisions;
+  setRevisionMutation(state, revision) {
+    if (revision.visible) {
+      state.revisionList.push(revision);
+    } else {
+      let idx = state.revisionList.findIndex((x) => x.id === revision.id);
+      state.revisionList.splice(idx, 1);
+    }
   },
 };
 
 const actions = {
-  setRevision({ commit }, revisions) {
-    commit("setRevision", revisions);
+  setRevision({ commit }, revision) {
+    commit("setRevisionMutation", revision);
   },
 };
 
