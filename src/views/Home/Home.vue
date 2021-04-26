@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <template v-if="revisionList.length > 0">
-      <v-tabs v-model="activeTab">
+      <v-tabs v-model="activeTab" @change="onTabChange($event)">
         <v-tab v-for="revision in revisionList" :key="revision.id">
           {{ revision.name }}
         </v-tab>
@@ -9,12 +9,89 @@
 
       <v-tabs-items v-model="activeTab">
         <v-tab-item v-for="revision in revisionList" :key="revision.id">
-          <v-data-table
-            :headers="headers"
-            :items="desserts"
-            :items-per-page="5"
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th
+                    class="text-left"
+                    v-for="header in RuleTableHeader"
+                    :key="header.value"
+                  >
+                    {{ header.text }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="rule in tableData" :key="rule.id">
+                  <td v-for="header in RuleTableHeader" :key="header.value">
+                    <template
+                      v-if="['qa', 'sc_qa', 'review'].includes(header.value)"
+                    >
+                      <v-checkbox
+                        v-if="header.value === 'qa'"
+                        v-model="rule.qa"
+                        :label="rule.qa_editor"
+                      ></v-checkbox>
+                      <v-checkbox
+                        v-if="header.value === 'sc_qa'"
+                        v-model="rule.sc_qa"
+                        :label="rule.sc_qa_editor"
+                      ></v-checkbox>
+                      <v-checkbox
+                        v-if="header.value === 'review'"
+                        v-model="rule.review"
+                        :label="rule.reviewer"
+                      ></v-checkbox>
+                    </template>
+                    <template v-else-if="header.value === 'done'">
+                      <v-select
+                        :items="doneOptions"
+                        v-model="rule.done"
+                        dense
+                        solo
+                      ></v-select>
+                    </template>
+                    <span v-else>{{ rule[header.value] }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+          <v-pagination
+            v-model="tableSetting.page"
+            :length="tableSetting.totalAmount"
+            :total-visible="tableSetting.totalVisible"
+            @input="onPageChange()"
+            @next="onPageChange()"
+            @previous="onPageChange()"
+          ></v-pagination>
+
+          <!-- <v-data-table
+            :headers="RuleTableHeader"
+            :items="FakeRuleData"
             class="elevation-1"
-          ></v-data-table>
+          >
+            <template v-slot:[`item.qa`]="{ item }">
+              <v-checkbox
+                v-model="item.qa"
+                :label="item.qa_editor"
+                @change="onQaChange(item)"
+              ></v-checkbox>
+            </template>
+            <template v-slot:[`item.sc_qa`]="{ item }">
+              <v-checkbox
+                v-model="item.sc_qa"
+                :label="item.sc_qa_editor"
+              ></v-checkbox>
+            </template>
+            <template v-slot:[`item.review`]="{ item }">
+              <v-checkbox
+                v-model="item.review"
+                :label="item.reviewer"
+              ></v-checkbox>
+            </template>
+          </v-data-table> -->
         </v-tab-item>
       </v-tabs-items>
     </template>
@@ -26,120 +103,31 @@
 
 <script>
 import { mapGetters } from "vuex";
+import {
+  RuleTableHeader,
+  FakeRuleData,
+  doneEnum,
+  doneOptions,
+} from "./fakeData";
+
 export default {
   name: "Home",
   components: {},
   data() {
     return {
-      headers: [
-        {
-          text: "Dessert (100g serving)",
-          align: "start",
-          sortable: false,
-          value: "name",
-        },
-        { text: "Calories", value: "calories" },
-        { text: "Fat (g)", value: "fat" },
-        { text: "Carbs (g)", value: "carbs" },
-        { text: "Protein (g)", value: "protein" },
-        { text: "Iron (%)", value: "iron" },
-      ],
-      desserts: [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          iron: "1%",
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          iron: "1%",
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          iron: "7%",
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          iron: "8%",
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          iron: "16%",
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          iron: "0%",
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          iron: "2%",
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          iron: "45%",
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          iron: "22%",
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          iron: "6%",
-        },
-      ],
-      list: [
-        {
-          rule: "",
-          name: "",
-          type: "",
-          owner: "", // 10em
-          status: 0,
-          QA: false,
-          secQA: false,
-          reviewer: "",
-          note: "", // long text
-        },
-      ],
+      RuleTableHeader: RuleTableHeader,
+      FakeRuleData: FakeRuleData,
+      doneEnum: doneEnum,
+      doneOptions: doneOptions,
       activeTab: null,
+      activeRevisionId: null,
+      tableSetting: {
+        page: 1,
+        itemsPerPage: 5,
+        totalVisible: 5,
+        totalAmount: Math.ceil(FakeRuleData.length / 5),
+      },
+      tableData: [],
     };
   },
   computed: {
@@ -147,7 +135,40 @@ export default {
       revisionList: "revision/activeTabList",
     }),
   },
-  methods: {},
+  methods: {
+    onQaChange(item) {
+      item.qa_editor = "王溪明";
+    },
+    getRuleData(revisionId, page) {
+      this.tableData = this.FakeRuleData.slice(
+        (page - 1) * this.tableSetting.itemsPerPage,
+        page * this.tableSetting.itemsPerPage
+      );
+    },
+    onTabChange(index) {
+      this.activeRevisionId = this.revisionList[index].id;
+      this.tableSetting.page = 1;
+      this.onPageChange();
+    },
+    onPageChange() {
+      this.getRuleData(this.activeRevisionId, this.tableSetting.page);
+    },
+  },
   mounted() {},
 };
 </script>
+
+<style lang="scss" scoped>
+// .v-tab {
+//   display: inline;
+//   font-size: 0.9em;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+//   word-break: normal;
+//   width: 300px;
+//   border: 1px;
+//   padding: 10px;
+//   margin: 10px;
+// }
+</style>
