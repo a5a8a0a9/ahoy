@@ -98,7 +98,7 @@ export default {
       drawer: false,
       mini: false,
       selected: [],
-      nodes: fakeNodeData,
+      nodes: [],
     };
   },
   computed: {
@@ -111,7 +111,16 @@ export default {
     },
   },
   methods: {
-    getData() {},
+    getData() {
+      fakeNodeData.forEach((node) => {
+        node.projects.forEach((project) => {
+          project.revisions = project.revisions.map((revision) => {
+            return { ...revision, visible: false };
+          });
+        });
+      });
+      this.nodes = fakeNodeData;
+    },
     selectItem(revision) {
       revision.visible = !revision.visible;
       this.$store.dispatch("revision/setRevision", revision);

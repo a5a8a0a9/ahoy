@@ -30,22 +30,7 @@ export default {
       return []; // this.revisions.filter((x) => x.visible);
     },
   },
-  methods: {
-    getData(input) {
-      return new Promise((resolve, reject) => {
-        if (input > 1) {
-          let data = [1, 2, 3];
-          resolve(data);
-        } else {
-          reject(666);
-        }
-      });
-    },
-  },
-  created() {
-    this.getData(-1).then((data) => {
-      console.log(data);
-    });
-  },
+  methods: {},
+  created() {},
 };
 </script>
