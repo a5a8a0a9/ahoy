@@ -3,7 +3,7 @@
     <template v-if="revisionList.length > 0">
       <v-tabs v-model="activeTab" @change="onTabChange($event)">
         <v-tab v-for="revision in revisionList" :key="revision.id">
-          {{ revision.name }}
+          {{ revision.report }}
         </v-tab>
       </v-tabs>
 
@@ -159,16 +159,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// .v-tab {
-//   display: inline;
-//   font-size: 0.9em;
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-//   white-space: nowrap;
-//   word-break: normal;
-//   width: 300px;
-//   border: 1px;
-//   padding: 10px;
-//   margin: 10px;
-// }
+.v-tabs:not(.v-tabs--vertical) .v-tab {
+  display: inline-block;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-top: 1rem;
+  max-width: 150px;
+}
+
+::v-deep .v-tabs-slider-wraper {
+  width: 150px;
+}
 </style>
