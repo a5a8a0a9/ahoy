@@ -74,7 +74,7 @@
               active-class="primary-text"
               @click="selectItem(revision)"
             >
-              <v-list-item-title v-text="revision.name"></v-list-item-title>
+              <v-list-item-title v-text="revision.report"></v-list-item-title>
 
               <v-list-item-icon>
                 <v-icon>
@@ -113,10 +113,13 @@ export default {
   methods: {
     getData() {
       fakeNodeData.forEach((node) => {
+        if (!node.projects) node.projects = [];
         node.projects.forEach((project) => {
-          project.revisions = project.revisions.map((revision) => {
-            return { ...revision, visible: false };
-          });
+          project.revisions = project.revisions
+            ? project.revisions.map((revision) => {
+                return { ...revision, visible: false };
+              })
+            : [];
         });
       });
       this.nodes = fakeNodeData;
@@ -128,6 +131,7 @@ export default {
   },
   created() {
     this.getData();
+    console.log(this.nodes);
   },
 };
 </script>
