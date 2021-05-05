@@ -7,6 +7,10 @@
         </v-tab>
       </v-tabs>
 
+      <!-- <div class="flex-tabs">
+        <div class="flex-tab" v-for="revision in revisionList" :key="revision.id"></div>
+      </div> -->
+
       <v-tabs-items v-model="activeTab">
         <v-tab-item v-for="revision in revisionList" :key="revision.id">
           <v-simple-table>
@@ -32,27 +36,48 @@
                         v-if="header.value === 'qa'"
                         v-model="rule.qa"
                         :label="rule.qa_editor"
+                        @change="onDataChange(rule)"
                       ></v-checkbox>
                       <v-checkbox
                         v-if="header.value === 'sc_qa'"
                         v-model="rule.sc_qa"
                         :label="rule.sc_qa_editor"
+                        @change="onDataChange(rule)"
                       ></v-checkbox>
                       <v-checkbox
                         v-if="header.value === 'review'"
                         v-model="rule.review"
                         :label="rule.reviewer"
+                        @change="onDataChange(rule)"
                       ></v-checkbox>
                     </template>
                     <template v-else-if="header.value === 'done'">
                       <v-select
+                        style="width: 180px; margin-top: 16px"
                         :items="doneOptions"
                         v-model="rule.done"
                         dense
                         solo
+                        @change="onDataChange(rule)"
                       ></v-select>
                     </template>
-                    <span v-else>{{ rule[header.value] }}</span>
+                    <span v-else @click="copytext(rule[header.value])" ref="">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <span
+                            v-bind="attrs"
+                            v-on="on"
+                            style="cursor: pointer"
+                          >
+                            {{ rule[header.value] }}
+                            <!-- <v-icon large color="blue-grey darken-2"
+                              >mdi-call-split</v-icon
+                            > -->
+                          </span>
+                        </template>
+                        <span>{{ rule[header.value] }}</span>
+                      </v-tooltip>
+                    </span>
                   </td>
                 </tr>
               </tbody>
@@ -103,12 +128,8 @@
 
 <script>
 import { mapGetters } from "vuex";
-import {
-  RuleTableHeader,
-  FakeRuleData,
-  doneEnum,
-  doneOptions,
-} from "./fakeData";
+import { FakeRuleData } from "./fakeData";
+import { RuleTableHeader, doneEnum, doneOptions } from "./Columns";
 
 export default {
   name: "Home",
@@ -153,23 +174,50 @@ export default {
     onPageChange() {
       this.getRuleData(this.activeRevisionId, this.tableSetting.page);
     },
+    onDataChange(rowData) {
+      console.log(rowData);
+      // this.loading = true;
+
+      // this.axios({
+      //   url: `${base}/api/rules/${this.activeRevisionId}`,
+      //   method: 'post',
+      //   data: rowData
+      // }).then(response => {
+      //   console.log(response)
+      // }).finally(() => {})
+    },
+    copytext(text) {
+      var oInput = document.createElement("input");
+      oInput.value = text; //賦值
+      document.body.appendChild(oInput);
+      oInput.select(); // 選擇物件
+      document.execCommand("Copy"); // 執行瀏覽器複製命令
+      oInput.style.display = "none";
+      alert(`已複製${text}`);
+    },
   },
   mounted() {},
 };
 </script>
 
 <style lang="scss" scoped>
-.v-tabs:not(.v-tabs--vertical) .v-tab {
-  display: inline-block;
-  white-space: nowrap;
-  word-break: keep-all;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-top: 1rem;
-  max-width: 150px;
-}
+// .v-tabs:not(.v-tabs--vertical) .v-tab {
+//   display: inline-block;
+//   white-space: nowrap;
+//   word-break: keep-all;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   padding-top: 1rem;
+//   max-width: 150px;
+// }
 
-::v-deep .v-tabs-slider-wraper {
-  width: 150px;
+// ::v-deep .v-tabs-slider-wraper {
+//   width: 150px;
+// }
+
+.flex-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
 }
 </style>

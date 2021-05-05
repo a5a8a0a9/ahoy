@@ -34,3 +34,24 @@ export default {
   created() {},
 };
 </script>
+
+<style lang="scss">
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #eee;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+</style>
