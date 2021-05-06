@@ -52,3 +52,69 @@ export const RuleTableHeader = [
     value: "note",
   },
 ];
+
+export const RuleTableFilterColumnList = {
+  name: {
+    label: "name",
+    filter: {
+      type: "text",
+      default: "",
+    },
+  },
+  description: {
+    label: "description",
+    filter: {
+      type: "text",
+      default: "",
+    },
+  },
+  owner: {
+    label: "owner",
+    filter: {
+      type: "text",
+      default: "",
+    },
+  },
+  editor: {
+    label: "editor",
+    filter: {
+      type: "text",
+      default: "",
+    },
+  },
+  qa_editor: {
+    label: "qa_editor",
+    filter: {
+      type: "text",
+      default: "",
+    },
+  },
+  sc_qa_editor: {
+    label: "sc_qa_editor",
+    filter: {
+      type: "text",
+      default: "",
+    },
+  },
+  reviewer: {
+    label: "reviewer",
+    filter: {
+      type: "text",
+      default: "",
+    },
+  },
+  rule_type: {
+    label: "rule_type",
+    filter: {
+      type: "select",
+      default: "",
+    },
+  },
+  status: {
+    label: "status",
+    filter: {
+      type: "select",
+      default: "",
+    },
+  },
+};
