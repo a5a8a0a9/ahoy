@@ -3,18 +3,26 @@
     <template v-if="revisionList.length > 0">
       <v-tabs v-model="activeTab" @change="onTabChange($event)">
         <v-tab v-for="revision in revisionList" :key="revision.id">
-          {{ revision.report }}
+          <!-- {{ revision.report }} -->
+          <template>
+            <span class="text-truncate">
+              {{ revision.report }}
+            </span>
+          </template>
         </v-tab>
       </v-tabs>
 
-      <v-tabs-items v-model="activeTab">
+      <v-tabs-items v-model="activeTab" style="height: 100%">
         <v-tab-item
           v-for="revision in revisionList"
           :key="revision.id"
-          style="padding: 16px"
+          style="
+            height: 100%;
+            display: grid;
+            grid-template-rows: max-content 1fr max-content;
+          "
         >
-          <h3>{{ revision.report }}</h3>
-          <v-card flat elevation="1" outlined>
+          <v-card flat outlined tile @mouseleave="onMouseleave()">
             <v-toolbar dense>
               <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
               <v-toolbar-title>{{ revision.report }}</v-toolbar-title>
@@ -25,38 +33,57 @@
               <v-btn icon>
                 <v-icon>mdi-cog</v-icon>
               </v-btn>
-              <v-btn icon @click="filterLock = !filterLock">
-                <v-icon>{{ filterLock ? "mdi-lock" : "mdi-lock-open" }}</v-icon>
+              <v-btn icon @click="toggle()" @mouseenter="onMouseenter()">
+                <v-icon :color="filterLock ? 'primary' : 'default'">{{
+                  filterLock ? "mdi-lock" : "mdi-lock-open"
+                }}</v-icon>
               </v-btn>
             </v-toolbar>
-            <v-card-text v-if="filterLock">
-              <v-row>
-                <v-col cols="3" style="display: flex">
-                  <v-text-field
-                    v-model="RuleTableFilters.name"
-                    :label="RuleTableFilterColumnList.name.label"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="9" style="display: flex">
-                  <v-text-field
-                    v-model="RuleTableFilters.description"
-                    :label="RuleTableFilterColumnList.description.label"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-              <div style="text-align: right">
-                <v-btn tile color="error">
-                  <v-icon left> mdi-refresh </v-icon>
-                  clear
-                </v-btn>
-                <v-btn tile color="normal">
-                  <v-icon left> mdi-magnify </v-icon>
-                  search
-                </v-btn>
+            <v-card-text>
+              <v-expand-transition>
+                <v-row
+                  v-show="isFilterOpen || filterLock"
+                  class="filter-content"
+                >
+                  <v-col cols="3" style="display: flex">
+                    <v-text-field
+                      v-model="RuleTableFilters.name"
+                      :label="RuleTableFilterColumnList.name.label"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="9" style="display: flex">
+                    <v-text-field
+                      v-model="RuleTableFilters.description"
+                      :label="RuleTableFilterColumnList.description.label"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-expand-transition>
+              <div
+                style="
+                  text-align: right;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                "
+              >
+                <label class="font-weight-black">filter options:</label>
+                <div>
+                  <v-btn color="error">
+                    <v-icon left> mdi-refresh </v-icon>
+                    clear
+                  </v-btn>
+                  <v-fade-transition>
+                    <v-btn color="normal" v-if="isFilterOpen || filterLock">
+                      <v-icon left> mdi-magnify </v-icon>
+                      search
+                    </v-btn>
+                  </v-fade-transition>
+                </div>
               </div>
             </v-card-text>
           </v-card>
-          <v-card flat outlined>
+          <v-card flat outlined tile>
             <v-simple-table>
               <template v-slot:default>
                 <thead>
@@ -127,15 +154,16 @@
                 </tbody>
               </template>
             </v-simple-table>
-            <v-pagination
-              v-model="tableSetting.page"
-              :length="tableSetting.totalAmount"
-              :total-visible="tableSetting.totalVisible"
-              @input="onPageChange()"
-              @next="onPageChange()"
-              @previous="onPageChange()"
-            ></v-pagination>
           </v-card>
+          <v-pagination
+            circle
+            v-model="tableSetting.page"
+            :length="tableSetting.totalAmount"
+            :total-visible="tableSetting.totalVisible"
+            @input="onPageChange()"
+            @next="onPageChange()"
+            @previous="onPageChange()"
+          ></v-pagination>
 
           <!-- <v-data-table
             :headers="RuleTableHeader"
@@ -198,7 +226,8 @@ export default {
         rule_type: "",
         status: "",
       },
-      filterLock: true,
+      filterLock: false,
+      isFilterOpen: false,
       RuleTableHeader: RuleTableHeader,
       FakeRuleData: FakeRuleData,
       doneEnum: doneEnum,
@@ -220,6 +249,15 @@ export default {
     }),
   },
   methods: {
+    onMouseenter() {
+      this.isFilterOpen = true;
+    },
+    onMouseleave() {
+      this.isFilterOpen = false;
+    },
+    toggle() {
+      this.filterLock = !this.filterLock;
+    },
     onQaChange(item) {
       item.qa_editor = "王溪明";
     },
@@ -268,17 +306,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.home {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+}
+
+::v-deep .v-tabs-slider-wrapper {
+  width: 250px !important;
+}
+
+::v-deep .v-pagination {
+  justify-content: flex-end;
+}
 .v-tab {
-  display: inline-block;
-  font-size: 0.55em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  // word-break: normal;
-  max-width: 300px;
-  border: 1px solid #ddd;
-  padding-top: 1rem;
-  // margin: 10;
-  // word-break: keep-all;
+  width: 250px;
+}
+.filter {
+  &-content {
+    transition: all 0.5s;
+    margin: unset;
+    padding: 12px;
+  }
 }
 </style>
