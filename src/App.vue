@@ -4,7 +4,7 @@
     <v-app-bar color="primary" dark app></v-app-bar>
 
     <v-main>
-      <v-container fluid style="height: 100%">
+      <v-container fluid style="height: 100%; padding: 16px">
         <router-view></router-view>
       </v-container>
     </v-main>
@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     tabs() {
-      return []; // this.revisions.filter((x) => x.visible);
+      return [];
     },
   },
   methods: {},

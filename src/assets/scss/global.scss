@@ -5,7 +5,8 @@
 /* Track */
 ::-webkit-scrollbar-track {
   border-radius: 10px;
-  background: #eee;
+  border: 1px solid #eeee;
+  // background: #eee;
 }
 /* Handle */
 ::-webkit-scrollbar-thumb {
@@ -16,6 +17,10 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #ccc;
 }
+
+// body {
+//   font-family: 'microsoft jhenghei';
+// }
 
 .ellipsis {
   overflow: hidden !important;
