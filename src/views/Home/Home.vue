@@ -3,7 +3,6 @@
     <template v-if="revisionList.length > 0">
       <v-tabs v-model="activeTab" @change="onTabChange($event)">
         <v-tab v-for="revision in revisionList" :key="revision.id">
-          <!-- {{ revision.report }} -->
           <template>
             <span class="text-truncate">
               {{ revision.report }}
@@ -19,13 +18,14 @@
           style="
             height: 100%;
             display: grid;
-            grid-template-rows: max-content 1fr max-content;
+            grid-template-rows: max-content max-content 1fr max-content;
           "
         >
+          <h4>{{ revision.report }}</h4>
           <v-card flat outlined tile @mouseleave="onMouseleave()">
             <v-toolbar dense>
               <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-              <v-toolbar-title>{{ revision.report }}</v-toolbar-title>
+              <!-- <v-toolbar-title>{{ revision.report }}</v-toolbar-title> -->
               <v-spacer></v-spacer>
               <v-btn icon>
                 <v-icon>mdi-download</v-icon>
@@ -164,38 +164,76 @@
             @next="onPageChange()"
             @previous="onPageChange()"
           ></v-pagination>
-
-          <!-- <v-data-table
-            :headers="RuleTableHeader"
-            :items="FakeRuleData"
-            class="elevation-1"
-          >
-            <template v-slot:[`item.qa`]="{ item }">
-              <v-checkbox
-                v-model="item.qa"
-                :label="item.qa_editor"
-                @change="onQaChange(item)"
-              ></v-checkbox>
-            </template>
-            <template v-slot:[`item.sc_qa`]="{ item }">
-              <v-checkbox
-                v-model="item.sc_qa"
-                :label="item.sc_qa_editor"
-              ></v-checkbox>
-            </template>
-            <template v-slot:[`item.review`]="{ item }">
-              <v-checkbox
-                v-model="item.review"
-                :label="item.reviewer"
-              ></v-checkbox>
-            </template>
-          </v-data-table> -->
         </v-tab-item>
       </v-tabs-items>
     </template>
     <template v-else>
       <h1>暫無資料</h1>
     </template>
+
+    <v-dialog v-model="dialog" persistent max-width="400">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn color="primary" dark v-bind="attrs" v-on="on">
+          Open Dialog
+        </v-btn>
+      </template>
+      <v-card v-if="dialogStep === 1">
+        <v-card-title class="headline">Upload</v-card-title>
+        <v-card-text>
+          <p>content 1</p>
+          <!-- <input type="file" @change="onFileUpload" /> -->
+          <v-file-input
+            truncate-length="15"
+            placeholder="suck my dick"
+            @change="onFileUpload"
+          ></v-file-input>
+          <!-- <v-btn color="green" @click="dialogStep1Action(200)">success</v-btn>
+          <v-btn color="error" @click="dialogStep1Action(400)">fail</v-btn> -->
+          <div style="color: red" v-if="errMsg">{{ errMsg }}</div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialog = false">
+            cancel
+          </v-btn>
+          <v-btn color="green darken-1" text @click="dialogStep1Action(200)">
+            Upload
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+      <v-card v-else-if="dialogStep === 2">
+        <v-card-title class="headline">Upload Success</v-card-title>
+        <v-card-text>
+          <v-text-field
+            label="Next Stage Owner"
+            placeholder="Fill in owner"
+            v-model="dialogStep2Owner"
+          ></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialogStep = 1">
+            NO
+          </v-btn>
+          <v-btn color="green darken-1" text @click="dialogStep2Action()">
+            YES
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+      <v-card v-else>
+        <v-card-title class="headline">{{ "QC & Archive Stage" }}</v-card-title>
+        <v-card-text> {{ successMsg }} </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialogStep = 2">
+            Disagree
+          </v-btn>
+          <v-btn color="green darken-1" text @click="dialogStep3Action()">
+            Agree
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -241,6 +279,11 @@ export default {
         totalAmount: Math.ceil(FakeRuleData.length / 5),
       },
       tableData: [],
+      dialog: false,
+      dialogStep: 1,
+      dialogStep2Owner: "",
+      errMsg: "",
+      successMsg: "",
     };
   },
   computed: {
@@ -300,6 +343,51 @@ export default {
       oInput.style.display = "none";
       alert(`已複製${text}`);
     },
+    /**---------------------------------------------------------------- */
+    onFileUpload(event) {
+      console.log(event);
+    },
+    dialogStep1Action(input) {
+      this.upload1(input)
+        .then(() => {
+          this.errMsg = "";
+          this.dialogStep = 2;
+        })
+        .catch((e) => {
+          this.errMsg = e.description;
+        });
+    },
+    dialogStep2Action() {
+      console.log(this.dialogStep2Owner);
+      this.upload2(this.dialogStep2Owner).then((response) => {
+        this.successMsg = response;
+        this.dialogStep = 3;
+      });
+    },
+    dialogStep3Action() {
+      this.dialog = false;
+    },
+    upload1(status) {
+      return new Promise((resolve, reject) => {
+        if (status === 200) {
+          resolve({
+            status: "success",
+            description: "success",
+          });
+        } else {
+          reject({
+            status: "fail",
+            description:
+              "Cannot find product with given name and version (1 2).",
+          });
+        }
+      });
+    },
+    upload2(owner) {
+      return new Promise((resolve) => {
+        resolve(`${owner} success`);
+      });
+    },
   },
   mounted() {},
 };
@@ -327,5 +415,12 @@ export default {
     margin: unset;
     padding: 12px;
   }
+}
+
+.v-data-table {
+  height: 100%;
+}
+::v-deep .v-data-table__wrapper {
+  height: 100%;
 }
 </style>

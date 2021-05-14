@@ -41,3 +41,34 @@ export const FakeRuleData = Array.from({ length: 10 }, (v, i) => {
 //     update_date: new Date(),
 //   },
 // ];
+
+/**
+ * v-data-table example
+ *
+ *
+ *           <!-- <v-data-table
+            :headers="RuleTableHeader"
+            :items="FakeRuleData"
+            class="elevation-1"
+          >
+            <template v-slot:[`item.qa`]="{ item }">
+              <v-checkbox
+                v-model="item.qa"
+                :label="item.qa_editor"
+                @change="onQaChange(item)"
+              ></v-checkbox>
+            </template>
+            <template v-slot:[`item.sc_qa`]="{ item }">
+              <v-checkbox
+                v-model="item.sc_qa"
+                :label="item.sc_qa_editor"
+              ></v-checkbox>
+            </template>
+            <template v-slot:[`item.review`]="{ item }">
+              <v-checkbox
+                v-model="item.review"
+                :label="item.reviewer"
+              ></v-checkbox>
+            </template>
+          </v-data-table> -->
+ */
