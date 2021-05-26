@@ -1,9 +1,7 @@
 <template>
-  <div class="home">
+  <div>
     <template v-if="revisionList.length > 0">
-      <div
-        style="display: grid; grid-template-rows: max-content 1fr; height: 100%"
-      >
+      <div class="ttt">
         <v-tabs v-model="activeTab" @change="onTabChange($event)">
           <v-tab v-for="revision in revisionList" :key="revision.id">
             <template>
@@ -22,6 +20,7 @@
               height: 100%;
               display: grid;
               grid-template-rows: max-content max-content 1fr max-content;
+              padding: 16px;
             "
           >
             <h4>{{ revision.report }}</h4>
@@ -86,8 +85,12 @@
                 </div>
               </v-card-text>
             </v-card>
-            <v-card flat outlined tile>
-              <v-simple-table>
+            <v-card
+              flat
+              tile
+              style="width: 100%; height: 100%; overflow-x: auto"
+            >
+              <v-simple-table fixed-header>
                 <template v-slot:default>
                   <thead>
                     <tr>
@@ -163,6 +166,7 @@
             <v-pagination
               circle
               v-model="tableSetting.page"
+              style="border-top: 1px solid #ddd"
               :length="tableSetting.totalAmount"
               :total-visible="tableSetting.totalVisible"
               @input="onPageChange()"
@@ -280,6 +284,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.ttt {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  border-radius: 10px;
+}
 .empty {
   display: grid;
   place-items: center;
@@ -287,6 +299,7 @@ export default {
   color: #aaa;
   background: #fff;
   border-radius: 10px;
+  user-select: none;
 }
 
 ::v-deep .v-tabs-slider-wrapper {
@@ -312,5 +325,6 @@ export default {
 }
 ::v-deep .v-data-table__wrapper {
   height: 100%;
+  overflow: auto;
 }
 </style>
