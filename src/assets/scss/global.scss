@@ -1,30 +1,7 @@
-/* width */
-::-webkit-scrollbar {
-  width: 8px;
-}
-/* Track */
-::-webkit-scrollbar-track {
-  border-radius: 10px;
-  border: 1px solid #eeee;
-  // background: #eee;
-}
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #ddd;
-  border-radius: 10px;
-}
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #ccc;
-}
+@import 'custom/Foundation/Base/reset';
+@import 'custom/Foundation/Base/gridSystem';
+@import 'custom/Foundation/Base/basic';
 
-// body {
-//   font-family: 'microsoft jhenghei';
-// }
+@import 'custom/Module/text';
 
-.ellipsis {
-  overflow: hidden !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  display: inline-block !important;
-}
+@import 'custom/Components/Layout/scrollbar';
