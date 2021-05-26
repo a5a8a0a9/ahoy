@@ -1,12 +1,16 @@
 <template>
   <div>
+    <v-app-bar color="primary" dark app>
+      <v-app-bar-nav-icon
+        @click.stop="isDrawerOpen = !isDrawerOpen"
+      ></v-app-bar-nav-icon>
+    </v-app-bar>
     <v-navigation-drawer
       app
       fixed
       absolute
-      permanent
       hide-overlay
-      expand-on-hover
+      v-model="isDrawerOpen"
       :mini-variant.sync="mini"
     >
       <v-list>
@@ -185,11 +189,9 @@
 import { fakeNodeData } from "./fakeData";
 export default {
   name: "navigation",
-  props: {
-    drawer: Boolean,
-  },
   data() {
     return {
+      isDrawerOpen: true,
       mini: false,
       selected: [],
       nodes: [],

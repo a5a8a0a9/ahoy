@@ -1,0 +1,27 @@
+$grid_gutter: 30px;
+
+$grid_arr: ((xs, 0), (sm, 768), (md, 992), (lg, 1200px));
+
+.grid-row {
+  display: grid;
+  grid-template-columns: repeat(12, calc((100% - #{$grid_gutter} * 11) / 12));
+  gap: $grid_gutter;
+  & > * {
+    grid-column-start: span 12;
+  }
+}
+
+@each $label, $breakpoint in $grid_arr {
+  @media (min-width: #{$breakpoint}) {
+    @for $i from 1 through 12 {
+      @for $y from 1 through 12 {
+        .grid-col-start-#{$label}-#{$y}.grid-col-#{$label}-#{$i} {
+          grid-column: #{$y} / span #{$i};
+        }
+      }
+      .grid-col-#{$label}-#{$i} {
+        grid-column-start: span #{$i};
+      }
+    }
+  }
+}

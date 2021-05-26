@@ -1,0 +1,48 @@
+.text {
+  // &-default {
+  //   color: $font-color
+  // }
+  // &-success {
+  //   color: $success-color
+  // }
+  // &-danger {
+  //   color: $danger-color
+  // }
+  // &-warning {
+  //   color: $warning-color
+  // }
+  // &-info {
+  //   color: $info-color
+  // }
+  // &-primary {
+  //   color: $primary-color
+  // }
+  // &-gray {
+  //   color: $font-gray-color
+  // }
+  // &-light-gray {
+  //   color: $font-gray-light-color
+  // }
+  // &-dark-gray {
+  //   color: $font-gray-state-color
+  // }
+
+  &-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+  &-ellipsis-flex {
+    display: inline-flex;
+    overflow: hidden;
+    & > span, & > p {
+      flex: 1 1 0;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block;
+      min-width: 0;
+      overflow: hidden;
+    }
+  }
+}
