@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app style="height: 100%">
     <navigation />
     <!-- <v-dialog v-model="dialog" persistent max-width="400">
       <template v-slot:activator="{ on, attrs }">
@@ -60,7 +60,7 @@
       </v-card>
     </v-dialog> -->
 
-    <v-main style="background: #eff0f4">
+    <v-main style="background: #eff0f4; height: calc(100% - 64px)">
       <v-container fluid style="height: 100%; padding: 16px">
         <router-view></router-view>
       </v-container>
